@@ -10,12 +10,20 @@ public class BubbleStepSort<E extends Comparable<E>> extends StepSort<E> {
     private boolean isDone;
 
     /**
-     * Creates a new instance of the sort, with the provided data set
+     * Creates a new instance of this sort, with the provided data set
      *
      * @param data Data set to be sorted
      */
     public BubbleStepSort(E[] data) {
         super(data);
+    }
+
+    /**
+     * Creates a new instance of this sort, without data set
+     * @see BubbleStepSort#BubbleStepSort(E[])
+     */
+    public BubbleStepSort() {
+        super(null);
     }
 
     private void swap(int index1, int index2) {
