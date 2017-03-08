@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -24,6 +26,21 @@ public class Main extends Application {
         pane = new ChartPane();
         pane.setStyle("-fx-border-color: black");
 
+        //create Tabpane
+        TabPane tabPane = new TabPane();
+
+        //create Tabs
+        Tab bubbleTab = new Tab();
+        bubbleTab.setText("BubbleSort");
+        Tab insertionTab = new Tab();
+        insertionTab.setText("InsertionSort");
+
+        //add tabs to tabpane
+        tabPane.getTabs().addAll(bubbleTab, insertionTab);
+
+
+
+        //create buttons
         Button step = new Button("Step");
         Button auto = new Button("Auto");
 
@@ -33,6 +50,9 @@ public class Main extends Application {
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(pane);
         borderPane.setBottom(hBox);
+        borderPane.setTop(tabPane);
+
+
 
         // Create a scene and place it in the stage
         Scene scene = new Scene(borderPane, 600, 250);

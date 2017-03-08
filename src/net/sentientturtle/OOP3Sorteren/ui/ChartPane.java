@@ -22,6 +22,11 @@ public class ChartPane extends Pane {
         graphicsContext2D.setLineWidth(1);
         graphicsContext2D.setFill(Color.DARKGREY);
 
+        //stroke outline border
+        graphicsContext2D.setStroke(Color.BLACK);
+
+        graphicsContext2D.stroke();
+
         double width = canvas.getWidth();
         double height = canvas.getHeight();
         graphicsContext2D.clearRect(0, 0, width, height);
@@ -34,6 +39,7 @@ public class ChartPane extends Pane {
         for (int i = 0; i < data.length; i++) {
             double colHeight = data[i] == null ? 0 : data[i].doubleValue();
             graphicsContext2D.fillRect(colWidth * i, height - colHeightFactor * colHeight, colWidth, colHeightFactor * colHeight);
+            graphicsContext2D.strokeRect(colWidth * i, height - colHeightFactor * colHeight, colWidth, colHeightFactor * colHeight);
         }
     }
 }
