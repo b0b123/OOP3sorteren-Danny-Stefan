@@ -11,7 +11,7 @@ import java.util.Random;
 import static org.junit.Assert.*;
 
 public class AbstractSortTest {
-    private final static boolean IS_VERBOSE = true;
+    private final static boolean IS_VERBOSE = false;
     private Random random = new Random();
 
     private void testSort(AbstractSort<Integer> sort) {
