@@ -7,6 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import net.sentientturtle.OOP3Sorteren.BubbleStepSort;
+import net.sentientturtle.OOP3Sorteren.InsertionStepSort;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -42,6 +43,11 @@ public class Main extends Application {
         for (int i = 0; i < data.length; i++) {
             data[i] = random.nextInt(200);
         }
+        InsertionStepSort<Integer> insertionStepSort = new InsertionStepSort<>(data);
+        do{
+            System.out.println(Arrays.toString(insertionStepSort.getData())+ "\t" + insertionStepSort.index);
+        }while(!insertionStepSort.step());
+
         BubbleStepSort<Integer> bubbleStepSort = new BubbleStepSort<>(data);
         do {
             System.out.println(Arrays.toString(bubbleStepSort.getData()) + "\t" + bubbleStepSort.index);
