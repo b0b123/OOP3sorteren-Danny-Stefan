@@ -4,7 +4,7 @@ package net.sentientturtle.OOP3Sorteren;
  * Implementation of BubbleSort that allows stepping-through
  * @param <E> Types to sort
  */
-public class BubbleStepSort<E extends Comparable<E>> extends StepSort<E> {
+public class BubbleSort<E extends Comparable<E>> extends AbstractSort<E> {
     public int index;
     private boolean hasSwapped;
     private boolean isDone;
@@ -14,35 +14,24 @@ public class BubbleStepSort<E extends Comparable<E>> extends StepSort<E> {
      *
      * @param data Data set to be sorted
      */
-    public BubbleStepSort(E[] data) {
+    public BubbleSort(E[] data) {
         super(data);
+        index = 0;
+        hasSwapped = false;
+        isDone = false;
     }
 
-    /**
-     * Creates a new instance of this sort, without data set
-     * @see BubbleStepSort#BubbleStepSort(E[])
-     */
-    public BubbleStepSort() {
-        super(null);
-    }
-
+    // TODO: Move up to AbstractSort for marking of swaps in the GUI
     private void swap(int index1, int index2) {
         E temp = data[index1];
         data[index1] = data[index2];
         data[index2] = temp;
     }
 
+    // TODO: Optimize by keeping track of completed cycles
     @Override
-    protected void reset() {
-        index = 0;
-        hasSwapped = false;
-        isDone = false;
-    }
-
-    @Override
-    public boolean step() throws IllegalStateException {
+    public synchronized boolean step() throws IllegalStateException {
         if (isDone) throw new IllegalStateException("Sort is already completed!");
-        if (data == null) throw new IllegalStateException("Data is null!");
         if (data.length == 1) return (isDone = true);
 
         if (data[index].compareTo(data[index + 1]) > 0) {

@@ -5,30 +5,15 @@ import java.util.Objects;
 /**
  * Abstract class for sorting algorithms that can be executed in single steps
  */
-public abstract class StepSort<E extends Comparable<E>> {
+public abstract class AbstractSort<E extends Comparable<E>> { // Name is still terrible at telling what this class does.
     protected E[] data;
 
     /**
      * Creates a new instance of the sort, with the provided data set
      * @param data Data set to be sorted, may be null
      */
-    public StepSort(E[] data) {
-        this.data = data;
-        reset();
-    }
-
-    /**
-     * Resets the state of this sort, called when data is changed
-     */
-    protected abstract void reset();
-
-    /**
-     * Sets the current data set to be sorted.
-     * @param data Data set to be sorted.
-     */
-    public void setData(E[] data) {
+    public AbstractSort(E[] data) {
         this.data = Objects.requireNonNull(data);
-        this.reset();
     }
 
     /**
