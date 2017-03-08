@@ -1,11 +1,11 @@
-package net.sentientturtle.OOP3Sorteren;
+package net.sentientturtle.OOP3Sorteren.sort;
 
 
 /**
  * Created by stefa on 8-3-2017.
  */
 public class InsertionSort<E extends Comparable<E>> extends AbstractSort<E> {
-    public int index;
+    private int index;
     private boolean isDone;
 
 

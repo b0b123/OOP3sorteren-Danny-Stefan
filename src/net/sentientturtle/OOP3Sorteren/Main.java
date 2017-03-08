@@ -1,3 +1,5 @@
+package net.sentientturtle.OOP3Sorteren;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -5,9 +7,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import net.sentientturtle.OOP3Sorteren.AbstractSort;
-import net.sentientturtle.OOP3Sorteren.BubbleSort;
-import net.sentientturtle.OOP3Sorteren.InsertionSort;
+import net.sentientturtle.OOP3Sorteren.sort.AbstractSort;
+import net.sentientturtle.OOP3Sorteren.sort.BubbleSort;
+import net.sentientturtle.OOP3Sorteren.sort.InsertionSort;
 import net.sentientturtle.OOP3Sorteren.ui.ChartPane;
 
 import java.util.Random;
@@ -39,7 +41,7 @@ public class Main extends Application {
         primaryStage.show(); // Display the stage
 
         for (int i = 0; i < dataSet.length; i++) dataSet[i] = random.nextInt(10)+1;
-        AbstractSort<Integer> sort = new InsertionSort<>(dataSet); //new BubbleSort<>(dataSet);
+        AbstractSort<Integer> sort = new BubbleSort<>(dataSet);
         step.setOnMouseClicked(event -> {
             if (!sort.isDone()) {
                 sort.step();
@@ -79,6 +81,7 @@ public class Main extends Application {
                     break;
                 }
             }
+            System.out.println("DONE");
         }
 
         public void toggle() {

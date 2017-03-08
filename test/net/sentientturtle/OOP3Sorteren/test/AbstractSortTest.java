@@ -1,8 +1,8 @@
 package net.sentientturtle.OOP3Sorteren.test;
 
-import net.sentientturtle.OOP3Sorteren.AbstractSort;
-import net.sentientturtle.OOP3Sorteren.BubbleSort;
-import net.sentientturtle.OOP3Sorteren.InsertionSort;
+import net.sentientturtle.OOP3Sorteren.sort.AbstractSort;
+import net.sentientturtle.OOP3Sorteren.sort.BubbleSort;
+import net.sentientturtle.OOP3Sorteren.sort.InsertionSort;
 import org.junit.Test;
 
 import java.util.Arrays;

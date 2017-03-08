@@ -1,4 +1,4 @@
-package net.sentientturtle.OOP3Sorteren;
+package net.sentientturtle.OOP3Sorteren.sort;
 
 import java.util.Objects;
 
