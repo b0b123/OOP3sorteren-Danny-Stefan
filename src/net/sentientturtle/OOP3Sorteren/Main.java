@@ -38,6 +38,10 @@ public class Main extends Application {
         //add tabs to tabpane
         tabPane.getTabs().addAll(bubbleTab, insertionTab);
 
+        //add content to tab
+        bubbleTab.setContent(pane);
+        insertionTab.setContent(pane);
+
 
 
         //create buttons
@@ -48,9 +52,10 @@ public class Main extends Application {
         hBox.getChildren().addAll(step, auto);
 
         BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(pane);
+        borderPane.setCenter(tabPane);
         borderPane.setBottom(hBox);
-        borderPane.setTop(tabPane);
+//        borderPane.setTop(tabPane);
+
 
 
 
