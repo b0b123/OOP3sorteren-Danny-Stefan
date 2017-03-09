@@ -6,28 +6,21 @@ import java.util.Objects;
  * Abstract class for sorting algorithms that can be executed in single steps
  */
 public abstract class AbstractSort<E extends Comparable<E>> { // Name is still terrible at telling what this class does.
-    protected E[] data;
-
+    protected DataSet<E> dataSet;
     /**
      * Creates a new instance of the sort, with the provided data set
-     * @param data Data set to be sorted, may be null
+     * @param dataSet DataSet to be sorted, may not be null
      */
-    public AbstractSort(E[] data) {
-        this.data = Objects.requireNonNull(data);
+    public AbstractSort(DataSet<E> dataSet) {
+        this.dataSet = Objects.requireNonNull(dataSet);
     }
 
     /**
-     * Gets the current data set, may be null!
-     * @return Data set currently being sorted.
+     * Gets the current data set
+     * @return DataSet currently being sorted.
      */
-    public E[] getData() {
-        return data;
-    }
-
-    protected void swap(int index1, int index2) {
-        E temp = data[index1];
-        data[index1] = data[index2];
-        data[index2] = temp;
+    public DataSet<E> getDataSet() {
+        return dataSet;
     }
 
     /**

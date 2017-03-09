@@ -2,13 +2,14 @@ package net.sentientturtle.OOP3Sorteren.test;
 
 import net.sentientturtle.OOP3Sorteren.sort.AbstractSort;
 import net.sentientturtle.OOP3Sorteren.sort.BubbleSort;
+import net.sentientturtle.OOP3Sorteren.sort.DataSet;
 import net.sentientturtle.OOP3Sorteren.sort.InsertionSort;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
 
 public class AbstractSortTest {
     private final static boolean IS_VERBOSE = true;
@@ -16,7 +17,7 @@ public class AbstractSortTest {
 
     private void testSort(AbstractSort<Integer> sort) {
         System.out.println("TESTING SORT: " + sort.getClass().getSimpleName());
-        Integer[] dataSet = sort.getData();
+        Integer[] dataSet = sort.getDataSet().getData();
         Integer[] clone = dataSet.clone();
         Arrays.sort(clone);
 
@@ -26,14 +27,14 @@ public class AbstractSortTest {
         }
         if (IS_VERBOSE) System.out.println(Arrays.toString(dataSet));
         assert sort.isDone();
-        assertArrayEquals(clone, sort.getData());
+        assertArrayEquals(clone, sort.getDataSet().getData());
         System.out.println();
     }
 
-    private Integer[] getDataSet() {
-        Integer[] dataSet = new Integer[10];
-        for (int i = 0; i < dataSet.length; i++) dataSet[i] = random.nextInt(20);
-        return dataSet;
+    private DataSet<Integer> getDataSet() {
+        Integer[] data = new Integer[10];
+        for (int i = 0; i < data.length; i++) data[i] = random.nextInt(20);
+        return new DataSet<>(data);
     }
 
     // Test if BubbleSort properly sorts

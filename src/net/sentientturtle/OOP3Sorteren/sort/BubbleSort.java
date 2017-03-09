@@ -13,22 +13,22 @@ public class BubbleSort<E extends Comparable<E>> extends AbstractSort<E> {
     /**
      * Creates a new instance of this sort, with the provided data set
      *
-     * @param data Data set to be sorted
+     * @param dataSet DataSet to be sorted
      */
-    public BubbleSort(E[] data) {
-        super(data);
+    public BubbleSort(DataSet<E> dataSet) {
+        super(dataSet);
         index = 0;
         completed = 0;
         hasSwapped = false;
-        isDone = (data.length == 1);
+        isDone = (dataSet.getData().length == 1);
     }
 
     @Override
     public synchronized boolean step() {
         if (isDone) return true;
-
+        E[] data = dataSet.getData();
         if (data[index].compareTo(data[index + 1]) > 0) {
-            swap(index, index + 1);
+            dataSet.swap(index, index + 1);
             hasSwapped = true;
         }
 
@@ -39,6 +39,7 @@ public class BubbleSort<E extends Comparable<E>> extends AbstractSort<E> {
                 completed++;
                 return false;
             }
+            dataSet.getSwappedColumns().set(-1, -1);
             return isDone = true;
         }
         return false;

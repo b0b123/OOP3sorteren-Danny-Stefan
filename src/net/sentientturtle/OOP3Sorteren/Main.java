@@ -10,7 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import net.sentientturtle.OOP3Sorteren.sort.AbstractSort;
-import net.sentientturtle.OOP3Sorteren.sort.BubbleSort;
+import net.sentientturtle.OOP3Sorteren.sort.DataSet;
 import net.sentientturtle.OOP3Sorteren.sort.InsertionSort;
 import net.sentientturtle.OOP3Sorteren.ui.ChartPane;
 
@@ -18,7 +18,6 @@ import java.util.Random;
 
 public class Main extends Application {
     private Random random = new Random();
-    private Integer[] dataSet = new Integer[40];
     private ChartPane pane;
 
     @Override
@@ -56,16 +55,15 @@ public class Main extends Application {
         borderPane.setBottom(hBox);
 //        borderPane.setTop(tabPane);
 
-
-
-
         // Create a scene and place it in the stage
         Scene scene = new Scene(borderPane, 600, 250);
         primaryStage.setTitle("Sorteren"); // Set the stage title
         primaryStage.setScene(scene); // Place the scene in the stage
         primaryStage.show(); // Display the stage
 
-        for (int i = 0; i < dataSet.length; i++) dataSet[i] = random.nextInt(10)+1;
+        Integer[] data = new Integer[20];
+        for (int i = 0; i < data.length; i++) data[i] = random.nextInt(10)+1;
+        DataSet<Integer> dataSet = new DataSet<>(data);
         AbstractSort<Integer> sort = new InsertionSort<>(dataSet);
         step.setOnMouseClicked(event -> {
             if (!sort.isDone()) {
@@ -88,9 +86,11 @@ public class Main extends Application {
     private class BGRunnable implements Runnable {
         private boolean isRunning = false;
         private AbstractSort<Integer> sort;
+        private DataSet<Integer> dataSet;
 
         BGRunnable(AbstractSort<Integer> sort) {
             this.sort = sort;
+            this.dataSet = sort.getDataSet();
         }
 
         @Override

@@ -10,8 +10,8 @@ public class InsertionSort<E extends Comparable<E>> extends AbstractSort<E> {
     private int sortedLength;
     private E currentElement;
 
-    public InsertionSort(E[] data) {
-        super(data);
+    public InsertionSort(DataSet<E> dataSet) {
+        super(dataSet);
         index = 0;
         isDone = false;
         sortedLength = 0;
@@ -22,15 +22,19 @@ public class InsertionSort<E extends Comparable<E>> extends AbstractSort<E> {
     @Override
     public synchronized boolean step() {
         if (isDone) return true;
+        E[] data = dataSet.getData();
         if (data.length == 1) return (isDone = true);
 
         if (currentElement == null) {
-            if (sortedLength > data.length-1) return (isDone = true);
+            if (sortedLength > data.length-1) {
+                dataSet.getSwappedColumns().set(-1, -1);
+                return (isDone = true);
+            }
             currentElement = data[sortedLength];
             index = sortedLength;
         }
         if (index > 0 && currentElement.compareTo(data[index-1]) < 0) {
-            swap(index, index-1);
+            dataSet.swap(index, index-1);
             index--;
         } else {
             sortedLength++;
