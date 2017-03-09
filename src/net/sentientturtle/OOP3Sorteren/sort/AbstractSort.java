@@ -24,12 +24,17 @@ public abstract class AbstractSort<E extends Comparable<E>> { // Name is still t
         return data;
     }
 
+    protected void swap(int index1, int index2) {
+        E temp = data[index1];
+        data[index1] = data[index2];
+        data[index2] = temp;
+    }
+
     /**
      * Executes one step of the implemented sorting algorithm.
-     * @return True if sorting is completed after this step, false otherwise.
-     * @throws IllegalStateException Thrown if done sorting, or no data is provided.
+     * @return True if sorting is completed, false otherwise.
      */
-    public abstract boolean step() throws IllegalStateException;
+    public abstract boolean step();
 
     /**
      * Returns the current state of the sort, true if done, false otherwise.

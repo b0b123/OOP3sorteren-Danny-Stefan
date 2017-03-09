@@ -7,27 +7,36 @@ package net.sentientturtle.OOP3Sorteren.sort;
 public class InsertionSort<E extends Comparable<E>> extends AbstractSort<E> {
     private int index;
     private boolean isDone;
-
+    private int sortedLength;
+    private E currentElement;
 
     public InsertionSort(E[] data) {
         super(data);
         index = 0;
         isDone = false;
+        sortedLength = 0;
+        currentElement = null;
     }
 
 
     @Override
-    public synchronized boolean step() throws IllegalStateException {
-        if (isDone) throw new IllegalStateException("Sort is already completed");
+    public synchronized boolean step() {
+        if (isDone) return true;
         if (data.length == 1) return (isDone = true);
 
-        int k;
-        E currentElement = data[index];
-        for (k = index - 1; k >= 0 && currentElement.compareTo(data[k]) < 0; k--) { // TODO: Split into separate steps
-            data[k + 1] = data[k];
+        if (currentElement == null) {
+            if (sortedLength > data.length-1) return (isDone = true);
+            currentElement = data[sortedLength];
+            index = sortedLength;
         }
-        data[k + 1] = currentElement;
-        return (isDone = ++index >= data.length);
+        if (index > 0 && currentElement.compareTo(data[index-1]) < 0) {
+            swap(index, index-1);
+            index--;
+        } else {
+            sortedLength++;
+            currentElement = null;
+        }
+        return false;
     }
 
 

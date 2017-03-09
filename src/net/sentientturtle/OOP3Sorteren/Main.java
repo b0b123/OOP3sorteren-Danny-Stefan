@@ -66,7 +66,7 @@ public class Main extends Application {
         primaryStage.show(); // Display the stage
 
         for (int i = 0; i < dataSet.length; i++) dataSet[i] = random.nextInt(10)+1;
-        AbstractSort<Integer> sort = new BubbleSort<>(dataSet);
+        AbstractSort<Integer> sort = new InsertionSort<>(dataSet);
         step.setOnMouseClicked(event -> {
             if (!sort.isDone()) {
                 sort.step();
@@ -97,7 +97,11 @@ public class Main extends Application {
         public void run() {
             while (true){
                 if (isRunning) {
-                    if (!sort.isDone()) sort.step();
+                    if (!sort.isDone()) {
+                        sort.step();
+                    } else {
+                        break;
+                    }
                     Platform.runLater(() -> pane.reDraw(dataSet));
                 }
                 try {

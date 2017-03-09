@@ -22,16 +22,10 @@ public class BubbleSort<E extends Comparable<E>> extends AbstractSort<E> {
         hasSwapped = false;
         isDone = (data.length == 1);
     }
-    
-    private void swap(int index1, int index2) {
-        E temp = data[index1];
-        data[index1] = data[index2];
-        data[index2] = temp;
-    }
 
     @Override
-    public synchronized boolean step() throws IllegalStateException {
-        if (isDone) throw new IllegalStateException("Sort is already completed!");
+    public synchronized boolean step() {
+        if (isDone) return true;
 
         if (data[index].compareTo(data[index + 1]) > 0) {
             swap(index, index + 1);
