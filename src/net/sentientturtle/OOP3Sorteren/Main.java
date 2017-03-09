@@ -41,8 +41,6 @@ public class Main extends Application {
         bubbleTab.setContent(pane);
         insertionTab.setContent(pane);
 
-
-
         //create buttons
         Button step = new Button("Step");
         Button auto = new Button("Auto");
@@ -53,7 +51,6 @@ public class Main extends Application {
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(tabPane);
         borderPane.setBottom(hBox);
-//        borderPane.setTop(tabPane);
 
         // Create a scene and place it in the stage
         Scene scene = new Scene(borderPane, 600, 250);
