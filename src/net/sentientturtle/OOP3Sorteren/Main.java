@@ -3,9 +3,7 @@ package net.sentientturtle.OOP3Sorteren;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -19,9 +17,12 @@ import java.util.Random;
 public class Main extends Application {
     private Random random = new Random();
     private ChartPane pane;
+    private static TextField time;
+    private int getTime;
 
     @Override
     public void start(Stage primaryStage){
+
         pane = new ChartPane();
         pane.setStyle("-fx-border-color: black");
 
@@ -44,13 +45,18 @@ public class Main extends Application {
         //create buttons
         Button step = new Button("Step");
         Button auto = new Button("Auto");
+        Label label = new Label("set time in ms:");
+        time = new TextField("50");
+
+        time.setPrefWidth(60);
 
         HBox hBox = new HBox(5);
-        hBox.getChildren().addAll(step, auto);
+        hBox.getChildren().addAll(step, auto, label, time);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(tabPane);
         borderPane.setBottom(hBox);
+
 
         // Create a scene and place it in the stage
         Scene scene = new Scene(borderPane, 600, 250);
@@ -73,7 +79,8 @@ public class Main extends Application {
         BGRunnable bgRunnable = new BGRunnable(sort);
         Thread bgThread = new Thread(bgRunnable);
         bgThread.start();
-        auto.setOnMouseClicked(event -> bgRunnable.toggle());
+        auto.setOnMouseClicked(event -> {getTime = Integer.parseInt(time.getText());
+                                            bgRunnable.toggle();});
         primaryStage.setOnCloseRequest(event -> bgThread.interrupt());
     }
     public static void main(String[] args) {
@@ -84,6 +91,8 @@ public class Main extends Application {
         private boolean isRunning = false;
         private AbstractSort<Integer> sort;
         private DataSet<Integer> dataSet;
+
+
 
         BGRunnable(AbstractSort<Integer> sort) {
             this.sort = sort;
@@ -102,7 +111,8 @@ public class Main extends Application {
                     Platform.runLater(() -> pane.reDraw(dataSet));
                 }
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(getTime);
+                    //System.out.println(setTime);
                 } catch (InterruptedException e) {
                     break;
                 }
@@ -113,5 +123,9 @@ public class Main extends Application {
         public void toggle() {
             isRunning = !isRunning;
         }
+
+
+
+
     }
 }
