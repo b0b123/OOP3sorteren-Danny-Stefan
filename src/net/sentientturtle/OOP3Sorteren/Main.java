@@ -1,13 +1,17 @@
 package net.sentientturtle.OOP3Sorteren;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import net.sentientturtle.OOP3Sorteren.sort.AbstractSort;
+import net.sentientturtle.OOP3Sorteren.sort.BubbleSort;
 import net.sentientturtle.OOP3Sorteren.sort.DataSet;
 import net.sentientturtle.OOP3Sorteren.sort.InsertionSort;
 import net.sentientturtle.OOP3Sorteren.ui.ChartPane;
@@ -19,42 +23,76 @@ public class Main extends Application {
     private ChartPane pane;
     private static TextField time;
     private int getTime;
+    private AbstractSort<Integer> sort;
+    private String menuText = "insertionsort";
+    BGRunnable bgRunnable;
+
+
+
 
     @Override
     public void start(Stage primaryStage){
-
+//        final AbstractSort<Integer> sort;
         pane = new ChartPane();
         pane.setStyle("-fx-border-color: black");
 
         //create Tabpane
-        TabPane tabPane = new TabPane();
+//        TabPane tabPane = new TabPane();
 
         //create Tabs
-        Tab bubbleTab = new Tab();
-        bubbleTab.setText("BubbleSort");
-        Tab insertionTab = new Tab();
-        insertionTab.setText("InsertionSort");
+//        Tab bubbleTab = new Tab();
+//        bubbleTab.setText("BubbleSort");
+//        Tab insertionTab = new Tab();
+//        insertionTab.setText("InsertionSort");
 
         //add tabs to tabpane
-        tabPane.getTabs().addAll(bubbleTab, insertionTab);
+//        tabPane.getTabs().addAll(bubbleTab, insertionTab);
+
+
 
         //add content to tab
-        bubbleTab.setContent(pane);
-        insertionTab.setContent(pane);
+//        bubbleTab.setContent(pane);
+//        insertionTab.setContent(pane);
+
+
+        //Create MenuBar
+        MenuBar menuBar = new MenuBar();
+
+        //create Menus
+        Menu sortingMenu = new Menu("Algoritmen");
+
+
+        RadioMenuItem bubblesortMenu = new RadioMenuItem("bubblesort");
+        RadioMenuItem insertionsortMenu = new RadioMenuItem("insertionsort");
+        RadioMenuItem quicksortMenu = new RadioMenuItem("quicksort");
+
+        ToggleGroup group = new ToggleGroup();
+        bubblesortMenu.setToggleGroup(group);
+        insertionsortMenu.setToggleGroup(group);
+        quicksortMenu.setToggleGroup(group);
+        bubblesortMenu.setSelected(true);
+
+        sortingMenu.getItems().addAll(bubblesortMenu, insertionsortMenu, quicksortMenu);
+
+        menuBar.getMenus().add(sortingMenu);
 
         //create buttons
         Button step = new Button("Step");
         Button auto = new Button("Auto");
+        Button set = new Button("Set");
         Label label = new Label("set time in ms:");
+
+
         time = new TextField("50");
 
         time.setPrefWidth(60);
 
         HBox hBox = new HBox(5);
-        hBox.getChildren().addAll(step, auto, label, time);
+        hBox.getChildren().addAll(step, auto, label, time, set);
 
         BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(tabPane);
+        borderPane.setTop(menuBar);
+        borderPane.setCenter(pane);
         borderPane.setBottom(hBox);
 
 
@@ -67,7 +105,32 @@ public class Main extends Application {
         Integer[] data = new Integer[20];
         for (int i = 0; i < data.length; i++) data[i] = random.nextInt(10)+1;
         DataSet<Integer> dataSet = new DataSet<>(data);
-        AbstractSort<Integer> sort = new InsertionSort<>(dataSet);
+        sort = new BubbleSort<>(dataSet);
+
+        bubblesortMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                sort = new BubbleSort<>(dataSet);
+                System.out.println("Bubblesort");
+                bgRunnable = new BGRunnable(sort);
+                Thread bgThread = new Thread(bgRunnable);
+                bgThread.start();
+
+            }
+        });
+
+        insertionsortMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                sort = new InsertionSort<>(dataSet);
+                System.out.println("InsertionSort");
+                menuText = "InsertionSort";
+                bgRunnable = new BGRunnable(sort);
+                Thread bgThread = new Thread(bgRunnable);
+                bgThread.start();
+            }
+        });
+
         step.setOnMouseClicked(event -> {
             if (!sort.isDone()) {
                 sort.step();
@@ -76,12 +139,14 @@ public class Main extends Application {
         });
 
         pane.reDraw(dataSet);
-        BGRunnable bgRunnable = new BGRunnable(sort);
+        bgRunnable = new BGRunnable(sort);
         Thread bgThread = new Thread(bgRunnable);
         bgThread.start();
-        auto.setOnMouseClicked(event -> {getTime = Integer.parseInt(time.getText());
-                                            bgRunnable.toggle();});
+        auto.setOnMouseClicked(event -> bgRunnable.toggle());
         primaryStage.setOnCloseRequest(event -> bgThread.interrupt());
+
+        set.setOnMouseClicked(event -> getTime = Integer.parseInt(time.getText()));
+
     }
     public static void main(String[] args) {
         launch(args);
