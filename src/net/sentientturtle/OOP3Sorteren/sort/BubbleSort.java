@@ -1,52 +1,37 @@
 package net.sentientturtle.OOP3Sorteren.sort;
 
 /**
- * Implementation of BubbleSort that allows stepping-through
+ * Implementation of bubble sort that yields every comparison/swap
  * @param <E> Types to sort
  */
-public class BubbleSort<E extends Comparable<E>> extends AbstractSort<E> {
-    private int index;
-    private int completed;
-    private boolean hasSwapped;
-    private boolean isDone;
+public class BubbleSort<E extends Comparable<E>> extends YieldingSort<E> {
 
     /**
-     * Creates a new instance of this sort, with the provided data set
+     * Creates a new instance of bubble sort, with the provided data set
      *
-     * @param dataSet DataSet to be sorted
+     * @param yieldingArray YieldingArray to be sorted
      */
-    public BubbleSort(DataSet<E> dataSet) {
-        super(dataSet);
-        index = 0;
-        completed = 0;
-        hasSwapped = false;
-        isDone = (dataSet.getData().length == 1);
+    public BubbleSort(YieldingArray<E> yieldingArray) {
+        super(yieldingArray);
     }
 
+    /**
+     * Sorts the given data set, yielding every comparison and swap
+     * @throws InterruptedException If the yield was interrupted
+     */
     @Override
-    public synchronized boolean step() {
-        if (isDone) return true;
-        E[] data = dataSet.getData();
-        if (data[index].compareTo(data[index + 1]) > 0) {
-            dataSet.swap(index, index + 1);
-            hasSwapped = true;
-        }
-
-        if (++index + 1 >= data.length-completed) {
-            if (hasSwapped) {
-                hasSwapped = false;
-                index = 0;
-                completed++;
-                return false;
+    public void run() throws InterruptedException {
+        boolean swapped;
+        int length = yieldingArray.size();
+        do {
+            swapped = false;
+            for (int i = 1; i < length; i++) {
+                if (yieldingArray.compare(i-1, i) > 0) {
+                    yieldingArray.swap(i-1, i);
+                    swapped = true;
+                }
             }
-            dataSet.getSwappedColumns().set(-1, -1);
-            return isDone = true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isDone() {
-        return isDone;
+            length--;
+        } while (swapped);
     }
 }

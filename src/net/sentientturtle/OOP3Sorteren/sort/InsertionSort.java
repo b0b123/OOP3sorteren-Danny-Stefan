@@ -1,52 +1,32 @@
 package net.sentientturtle.OOP3Sorteren.sort;
 
-
 /**
- * Created by stefa on 8-3-2017.
+ * Implementation of insertion sort that yields every comparison/swap
+ * @param <E> Types to sort
  */
-public class InsertionSort<E extends Comparable<E>> extends AbstractSort<E> {
-    private int index;
-    private boolean isDone;
-    private int sortedLength;
-    private E currentElement;
+public class InsertionSort<E extends Comparable<E>> extends YieldingSort<E> {
 
-    public InsertionSort(DataSet<E> dataSet) {
-        super(dataSet);
-        index = 0;
-        isDone = false;
-        sortedLength = 0;
-        currentElement = null;
+    /**
+     * Creates a new instance of insertion sort, with the provided data set
+     *
+     * @param yieldingArray YieldingArray to be sorted
+     */
+    public InsertionSort(YieldingArray<E> yieldingArray) {
+        super(yieldingArray);
     }
 
-
+    /**
+     * Sorts the given data set, yielding every comparison and swap
+     * @throws InterruptedException If the yield was interrupted
+     */
     @Override
-    public synchronized boolean step() {
-        if (isDone) return true;
-        E[] data = dataSet.getData();
-        if (data.length == 1) return (isDone = true);
-
-        if (currentElement == null) {
-            if (sortedLength > data.length-1) {
-                dataSet.getSwappedColumns().set(-1, -1);
-                return (isDone = true);
+    public void run() throws InterruptedException {
+        for (int i = 1; i < yieldingArray.size(); i++) {
+            int j = i;
+            while (j > 0 && yieldingArray.compare(j-1, j) > 0) {
+                yieldingArray.swap(j-1, j);
+                j--;
             }
-            currentElement = data[sortedLength];
-            index = sortedLength;
         }
-        if (index > 0 && currentElement.compareTo(data[index-1]) < 0) {
-            dataSet.swap(index, index-1);
-            index--;
-        } else {
-            sortedLength++;
-            currentElement = null;
-        }
-        return false;
     }
-
-
-    @Override
-    public boolean isDone() {
-        return isDone;
-    }
-
 }
