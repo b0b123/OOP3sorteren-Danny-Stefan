@@ -19,8 +19,7 @@ public class YieldingSortTest {
         Integer[] clone = dataSet.clone();
         Arrays.sort(clone);
 
-        Coroutine coroutine = new Coroutine(sort);
-        coroutine.stepThrough();
+        sort.stepThrough();
         if (IS_VERBOSE) System.out.println(Arrays.toString(dataSet));
         //assert sort.isDone();
         assertArrayEquals(clone, sort.getYieldingArray().getData());

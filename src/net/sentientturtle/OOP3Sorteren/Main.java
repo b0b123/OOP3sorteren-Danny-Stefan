@@ -31,14 +31,14 @@ public class Main extends Application {
         for (int i = 0; i < data.length; i++) data[i] = random.nextInt(10)+1;
         dataSet = new YieldingArray<>(data);
         switch (sortingType) {
-            case Bubblesort:
-                sort = new Coroutine(new BubbleSort<>(dataSet));
+            case BubbleSort:
+                sort = new BubbleSort<>(dataSet);
                 break;
             case InsertionSort:
-                sort = new Coroutine(new InsertionSort<>(dataSet));
+                sort = new InsertionSort<>(dataSet);
                 break;
             case QuickSort:
-                sort = new Coroutine(new QuickSort<>(dataSet));
+                sort = new QuickSort<>(dataSet);
                 break;
             case MergeSort:
                 // TODO
@@ -107,14 +107,14 @@ public class Main extends Application {
         primaryStage.setScene(scene); // Place the scene in the stage
         primaryStage.show(); // Display the stage
 
-        newSort(SortingType.Bubblesort);
+        newSort(SortingType.BubbleSort);
 
-        bubblesortMenu.setOnAction(event -> newSort(SortingType.Bubblesort));
+        bubblesortMenu.setOnAction(event -> newSort(SortingType.BubbleSort));
         insertionsortMenu.setOnAction(event -> newSort(SortingType.InsertionSort));
         quicksortMenu.setOnAction(event -> newSort(SortingType.QuickSort));
 
         step.setOnMouseClicked(event -> {
-            if (!sort.isDone()) {
+            if (!sort.isFinished()) {
                 try {
                     sort.step();
                     pane.reDraw(dataSet);
@@ -150,7 +150,7 @@ public class Main extends Application {
             try {
                 while (true) {
                     if (isRunning) {
-                        if (!sort.isDone()) {
+                        if (!sort.isFinished()) {
                             sort.step();
                         } else {
                             break;
@@ -160,23 +160,21 @@ public class Main extends Application {
                     try {
                         Thread.sleep(getTime);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
                         break;
                     }
                 }
-                System.out.println("DONE");
             } catch (InterruptedException ignored) {
                 // Exit immediately
             }
         }
 
-        public void toggle() {
+        void toggle() {
             isRunning = !isRunning;
         }
     }
 
     private enum SortingType {
-        Bubblesort,
+        BubbleSort,
         InsertionSort,
         QuickSort,
         MergeSort

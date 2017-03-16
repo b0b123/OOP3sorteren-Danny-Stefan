@@ -5,7 +5,6 @@ package net.sentientturtle.OOP3Sorteren.sort;
  * @param <E> Types to sort
  */
 public class BubbleSort<E extends Comparable<E>> extends YieldingSort<E> {
-
     /**
      * Creates a new instance of bubble sort, with the provided data set
      *

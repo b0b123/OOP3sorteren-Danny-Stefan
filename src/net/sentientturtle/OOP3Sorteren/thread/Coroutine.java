@@ -5,35 +5,39 @@ import java.util.*;
 /**
  * Basic coroutine implementation, uses a separate thread for each coroutine
  */
-public class Coroutine {
-    private static Map<Thread, YieldingRunnable> threadMap = Collections.synchronizedMap(new HashMap<>());
+public abstract class Coroutine {
+    private static Map<Thread, Coroutine> threadMap = Collections.synchronizedMap(new HashMap<>());
     private final Thread thread;
-    private final YieldingRunnable yieldingRunnable;
+
+    private boolean isStarted = false;
+    private boolean isFinished = false;
+    private boolean isRunning = false;
+    private boolean isInterrupted = false;
+    private Throwable stopCause = null;
 
     /**
-     * Creates a new coroutine with the given yielding runnable
-     * @param yieldingRunnable Yielding runnable to execute in this coroutine
+     * Creates a new coroutine
      */
-    public Coroutine(YieldingRunnable yieldingRunnable) {
-        this.yieldingRunnable = yieldingRunnable;
+    public Coroutine() {
+        Coroutine coroutine = this;
         this.thread = new Thread(() -> {
-            yieldingRunnable.setStarted();
-            yieldingRunnable.setRunning(true);
+            coroutine.setStarted();
+            coroutine.setRunning(true);
             try {
                 Coroutine.yield();
-                yieldingRunnable.run();
+                coroutine.run();
             } catch (InterruptedException e) {
-                yieldingRunnable.setFinished();
-                yieldingRunnable.setInterrupt();
+                coroutine.setFinished();
+                coroutine.setInterrupt();
             } catch (Throwable e) {
-                yieldingRunnable.setStopCause(e);
+                coroutine.setStopCause(e);
             }
-            yieldingRunnable.setFinished();
-            yieldingRunnable.setRunning(false);
+            coroutine.setFinished();
+            coroutine.setRunning(false);
         });
-        threadMap.put(thread, yieldingRunnable);
+        threadMap.put(thread, coroutine);
         thread.start();
-        while (!yieldingRunnable.isStarted()) {
+        while (!coroutine.isStarted()) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -42,12 +46,14 @@ public class Coroutine {
         }
     }
 
+    protected abstract void run() throws InterruptedException;
+
     /**
      * Stops this coroutine and interrupts it's thread
      */
     public void stop() {
         thread.interrupt();
-        while (!yieldingRunnable.isFinished()) {
+        while (!this.isFinished()) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -62,15 +68,15 @@ public class Coroutine {
      * @throws InterruptedException If the runnable was interrupted
      */
     public void step() throws InterruptedException {
-        if (!yieldingRunnable.isFinished()) {
+        if (!this.isFinished()) {
             synchronized (thread) {
                 thread.notify();
             }
-            synchronized (yieldingRunnable) {
-                yieldingRunnable.wait();
+            synchronized (this) {
+                this.wait();
             }
-            if (yieldingRunnable.isInterrupted()) throw new InterruptedException();
-            if (yieldingRunnable.isFinished()) threadMap.remove(thread);
+            if (this.isInterrupted()) throw new InterruptedException();
+            if (this.isFinished()) threadMap.remove(thread);
         }
     }
 
@@ -79,7 +85,7 @@ public class Coroutine {
      * @throws InterruptedException If this coroutine's runnable is interrupted at any point during the step-through
      */
     public void stepThrough() throws InterruptedException {
-        while (!yieldingRunnable.isFinished()) {
+        while (!this.isFinished()) {
             step();
         }
     }
@@ -92,14 +98,51 @@ public class Coroutine {
     public static void yield() throws InterruptedException {
         Thread currentThread = Thread.currentThread();
         if (threadMap.containsKey(currentThread)) {
-            threadMap.get(currentThread).setRunning(false);
+            Coroutine coroutine = threadMap.get(currentThread);
+            coroutine.setRunning(false);
             synchronized (currentThread) {
                 currentThread.wait();
             }
-            threadMap.get(currentThread).setRunning(true);
+            coroutine.setRunning(true);
         } else {
             throw new IllegalStateException("Yield called from a non-coroutine thread!");
         }
+    }
+
+    // Sets running state for this runnable
+    private synchronized void setRunning(boolean running) {
+        this.isRunning = running;
+        if (!running) this.notifyAll();
+    }
+
+    /**
+     * Returns the current state of this runnable
+     * @return True if this runnable is running (not yielded) false otherwise.
+     */
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    /**
+     * Sets the setInterrupt flag on this runnable
+     */
+    private void setInterrupt() {
+        this.isInterrupted = true;
+    }
+
+    /**
+     * Returns the interrupted state of this runnable
+     * @return True if this runnable was interrupted, false otherwise
+     */
+    public boolean isInterrupted() {
+        return isInterrupted;
+    }
+
+    /**
+     * Sets this runnable's finished flag to true
+     */
+    private void setFinished() {
+        isFinished = true;
     }
 
     /**
@@ -107,15 +150,39 @@ public class Coroutine {
      * May return false shortly after this coroutine's runnable finishes before the thread is marked dead
      * @return True if this coroutine's runnable has finished, false otherwise
      */
-    public boolean isDone() {
-        return yieldingRunnable.isFinished();
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+
+    /**
+     * Sets this runnable's started flag to true
+     */
+    private void setStarted() {
+        isStarted = true;
     }
 
     /**
-     * Gets this coroutine's runnable
-     * @return this coroutine's runnable
+     * Returns the started status of this runnable
+     * @return True if this runnable has started, false otherwise
      */
-    public YieldingRunnable getRunnable() {
-        return yieldingRunnable;
+    public boolean isStarted() {
+        return isStarted;
+    }
+
+    /**
+     * Sets the stop cause of this runnable
+     * @param stopCause Throwable that caused this runnable to stop
+     */
+    private void setStopCause(Throwable stopCause) {
+        this.stopCause = stopCause;
+    }
+
+    /**
+     * Gets the throwable that stopped this runnable, or null if either the runnable is not yet finished, or finished without throwing anything
+     * @return Stop cause of this runnable
+     */
+    public Throwable getStopCause() {
+        return stopCause;
     }
 }

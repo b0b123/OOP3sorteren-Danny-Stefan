@@ -36,10 +36,18 @@ public class ChartPane extends Pane {
         double colHeightFactor = height / max;
 
         for (int i = 0; i < data.length; i++) {
-            if (yieldingArray.getLastSwapped().contains(i)) {
-                graphicsContext2D.setFill(Color.DARKRED);
+            if (yieldingArray.getLastCompared().contains(i)) {
+                if (yieldingArray.getLastSwapped().contains(i)) {
+                    graphicsContext2D.setFill(Color.YELLOW);
+                } else {
+                    graphicsContext2D.setFill(Color.BLUE);
+                }
             } else {
-                graphicsContext2D.setFill(Color.DARKGREY);
+                if (yieldingArray.getLastSwapped().contains(i)) {
+                    graphicsContext2D.setFill(Color.DARKRED);
+                } else {
+                    graphicsContext2D.setFill(Color.DARKGREY);
+                }
             }
             double colHeight = data[i] == null ? 0 : data[i].doubleValue();
             graphicsContext2D.fillRect(colWidth * i, height - colHeightFactor * colHeight, colWidth, colHeightFactor * colHeight);

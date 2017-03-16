@@ -14,6 +14,7 @@ import java.util.Objects;
 public class YieldingArray<E extends Comparable<E>> {
     private E[] data;
     private Pair<Integer, Integer> lastSwapped;
+    private Pair<Integer, Integer> lastCompared;
 
     /**
      * Creates a new YieldingArray from the specified array object
@@ -24,6 +25,7 @@ public class YieldingArray<E extends Comparable<E>> {
         this.data = data.clone();
         for (E datum : data) if (datum == null) throw new NullPointerException("Data array contains null!");
         lastSwapped = new Pair<>(-1, -1);
+        lastCompared = new Pair<>(-1, -1);
     }
 
     /**
@@ -37,8 +39,7 @@ public class YieldingArray<E extends Comparable<E>> {
         E temp = data[index1];
         data[index1] = data[index2];
         data[index2] = temp;
-        lastSwapped.setObject1(index1);
-        lastSwapped.setObject2(index2);
+        lastSwapped.set(index1, index2);
     }
 
     /**
@@ -47,6 +48,14 @@ public class YieldingArray<E extends Comparable<E>> {
      */
     public Pair<Integer, Integer> getLastSwapped() {
         return lastSwapped;
+    }
+
+    /**
+     * Returns a pair of the indices of the last-compared values
+     * @return Pair integers containing the indices of the last-compared values, or -1 if no swap has occurred.
+     */
+    public Pair<Integer, Integer> getLastCompared() {
+        return lastCompared;
     }
 
     /**
@@ -66,6 +75,7 @@ public class YieldingArray<E extends Comparable<E>> {
      */
     public int compare(int index1, int index2) throws InterruptedException {
         Coroutine.yield();
+        lastCompared.set(index1, index2);
         return data[index1].compareTo(data[index2]);
     }
 
@@ -78,6 +88,7 @@ public class YieldingArray<E extends Comparable<E>> {
      */
     public int compareTo(int index, E value) throws InterruptedException {
         Coroutine.yield();
+        lastCompared.set(index, -1);
         return data[index].compareTo(value);
     }
 

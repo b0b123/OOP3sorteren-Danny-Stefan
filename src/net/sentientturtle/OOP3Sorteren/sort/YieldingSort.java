@@ -1,6 +1,6 @@
 package net.sentientturtle.OOP3Sorteren.sort;
 
-import net.sentientturtle.OOP3Sorteren.thread.YieldingRunnable;
+import net.sentientturtle.OOP3Sorteren.thread.Coroutine;
 
 import java.util.Objects;
 
@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 // (∩｀-´)⊃━☆ﾟ.*・｡ﾟ
 // Uses evil side effect magic to halt during sorts while maintaining recursive implementation
-public abstract class YieldingSort<E extends Comparable<E>> extends YieldingRunnable {
+public abstract class YieldingSort<E extends Comparable<E>> extends Coroutine {
     protected YieldingArray<E> yieldingArray;
     /**
      * Creates a new instance of the sort, with the provided yielding array
