@@ -63,9 +63,9 @@ public abstract class Coroutine {
     }
 
     /**
-     * Steps this coroutine's runnable until the next yield, or the runnable finishes
-     * Will do nothing if the runnable has already finished
-     * @throws InterruptedException If the runnable was interrupted
+     * Steps this coroutine until the next yield, or it finishes
+     * Will do nothing if this coroutine has already finished
+     * @throws InterruptedException If this coroutine was interrupted
      */
     public void step() throws InterruptedException {
         if (!this.isFinished()) {
@@ -81,8 +81,8 @@ public abstract class Coroutine {
     }
 
     /**
-     * Repeatedly steps until this coroutine's runnable is finished
-     * @throws InterruptedException If this coroutine's runnable is interrupted at any point during the step-through
+     * Repeatedly steps until this coroutine is finished
+     * @throws InterruptedException If this coroutine is interrupted at any point during the step-through
      */
     public void stepThrough() throws InterruptedException {
         while (!this.isFinished()) {
@@ -93,7 +93,7 @@ public abstract class Coroutine {
     /**
      * Halts the calling thread
      * @throws InterruptedException If the calling thread is interrupted
-     * @throws IllegalStateException If this method is called from a thread not running in a YieldingRunnable
+     * @throws IllegalStateException If this method is called from outside a coroutine
      */
     public static void yield() throws InterruptedException {
         Thread currentThread = Thread.currentThread();
@@ -109,37 +109,37 @@ public abstract class Coroutine {
         }
     }
 
-    // Sets running state for this runnable
+    // Sets running state
     private synchronized void setRunning(boolean running) {
         this.isRunning = running;
         if (!running) this.notifyAll();
     }
 
     /**
-     * Returns the current state of this runnable
-     * @return True if this runnable is running (not yielded) false otherwise.
+     * Returns the current state of this coroutine
+     * @return True if this coroutine is running (not yielded) false otherwise.
      */
     public boolean isRunning() {
         return isRunning;
     }
 
     /**
-     * Sets the setInterrupt flag on this runnable
+     * Sets the setInterrupt flag on this coroutine
      */
     private void setInterrupt() {
         this.isInterrupted = true;
     }
 
     /**
-     * Returns the interrupted state of this runnable
-     * @return True if this runnable was interrupted, false otherwise
+     * Returns the interrupted state of this coroutine
+     * @return True if this coroutine was interrupted, false otherwise
      */
     public boolean isInterrupted() {
         return isInterrupted;
     }
 
     /**
-     * Sets this runnable's finished flag to true
+     * Sets this coroutine's finished flag to true
      */
     private void setFinished() {
         isFinished = true;
@@ -147,8 +147,8 @@ public abstract class Coroutine {
 
     /**
      * Returns the current completion state of this coroutine
-     * May return false shortly after this coroutine's runnable finishes before the thread is marked dead
-     * @return True if this coroutine's runnable has finished, false otherwise
+     * May return false shortly after this coroutine finishes before the thread is marked dead
+     * @return True if this coroutine has finished, false otherwise
      */
     public boolean isFinished() {
         return isFinished;
@@ -156,31 +156,31 @@ public abstract class Coroutine {
 
 
     /**
-     * Sets this runnable's started flag to true
+     * Sets this coroutine's started flag to true
      */
     private void setStarted() {
         isStarted = true;
     }
 
     /**
-     * Returns the started status of this runnable
-     * @return True if this runnable has started, false otherwise
+     * Returns the started status of this coroutine
+     * @return True if this coroutine has started, false otherwise
      */
-    public boolean isStarted() {
+    private boolean isStarted() {
         return isStarted;
     }
 
     /**
-     * Sets the stop cause of this runnable
-     * @param stopCause Throwable that caused this runnable to stop
+     * Sets the stop cause of this coroutine
+     * @param stopCause Throwable that caused this coroutine to stop
      */
     private void setStopCause(Throwable stopCause) {
         this.stopCause = stopCause;
     }
 
     /**
-     * Gets the throwable that stopped this runnable, or null if either the runnable is not yet finished, or finished without throwing anything
-     * @return Stop cause of this runnable
+     * Gets the throwable that stopped this coroutine, or null if either the coroutine is not yet finished, or finished without throwing anything
+     * @return Stop cause of this coroutine
      */
     public Throwable getStopCause() {
         return stopCause;
