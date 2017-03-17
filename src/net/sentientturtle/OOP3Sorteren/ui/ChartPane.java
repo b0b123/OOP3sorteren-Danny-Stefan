@@ -38,13 +38,13 @@ public class ChartPane extends Pane {
         for (int i = 0; i < data.length; i++) {
             if (yieldingArray.getLastCompared().contains(i)) {
                 if (yieldingArray.getLastSwapped().contains(i)) {
-                    graphicsContext2D.setFill(Color.YELLOW);
+                    graphicsContext2D.setFill(Color.web("#8C2E73"));
                 } else {
-                    graphicsContext2D.setFill(Color.BLUE);
+                    graphicsContext2D.setFill(Color.web("#0066FF"));
                 }
             } else {
                 if (yieldingArray.getLastSwapped().contains(i)) {
-                    graphicsContext2D.setFill(Color.DARKRED);
+                    graphicsContext2D.setFill(Color.web("#F2050D"));
                 } else {
                     graphicsContext2D.setFill(Color.DARKGREY);
                 }

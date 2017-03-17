@@ -8,8 +8,6 @@ import java.util.Objects;
  * Abstract class for sorting algorithms that yield every comparison and swap
  * @see net.sentientturtle.OOP3Sorteren.thread.Coroutine
  */
-// (∩｀-´)⊃━☆ﾟ.*・｡ﾟ
-// Uses evil side effect magic to halt during sorts while maintaining recursive implementation
 public abstract class YieldingSort<E extends Comparable<E>> extends Coroutine {
     protected YieldingArray<E> yieldingArray;
     /**

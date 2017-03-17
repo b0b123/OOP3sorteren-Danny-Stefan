@@ -7,10 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import net.sentientturtle.OOP3Sorteren.sort.BubbleSort;
-import net.sentientturtle.OOP3Sorteren.sort.InsertionSort;
-import net.sentientturtle.OOP3Sorteren.sort.QuickSort;
-import net.sentientturtle.OOP3Sorteren.sort.YieldingArray;
+import net.sentientturtle.OOP3Sorteren.sort.*;
 import net.sentientturtle.OOP3Sorteren.thread.Coroutine;
 import net.sentientturtle.OOP3Sorteren.ui.ChartPane;
 
@@ -23,6 +20,7 @@ public class Main extends Application {
     private int getTime;
     private Coroutine sort;
     private YieldingArray<Integer> dataSet;
+    private Button step;
     private Button auto;
     private Thread bgThread;
 
@@ -41,15 +39,15 @@ public class Main extends Application {
                 sort = new QuickSort<>(dataSet);
                 break;
             case MergeSort:
-                // TODO
-                throw new RuntimeException("No mergesort exists yet!");
+                sort = new MergeSort<>(dataSet);
+                break;
         }
 
-        pane.reDraw(dataSet);
         BGRunnable bgRunnable = new BGRunnable(sort, dataSet);
         if (bgThread != null) bgThread.interrupt();
         bgThread = new Thread(bgRunnable);
         bgThread.start();
+        pane.reDraw(dataSet);
         auto.setOnMouseClicked(event -> bgRunnable.toggle());
     }
 
@@ -67,22 +65,24 @@ public class Main extends Application {
         Menu sortingMenu = new Menu("Algoritmen");
 
 
-        RadioMenuItem bubblesortMenu = new RadioMenuItem("bubblesort");
-        RadioMenuItem insertionsortMenu = new RadioMenuItem("insertionsort");
-        RadioMenuItem quicksortMenu = new RadioMenuItem("quicksort");
+        RadioMenuItem bubbleSortMenu = new RadioMenuItem("BubbleSort");
+        RadioMenuItem insertionSortMenu = new RadioMenuItem("InsertionSort");
+        RadioMenuItem quickSortMenu = new RadioMenuItem("QuickSort");
+        RadioMenuItem mergeSortMenu = new RadioMenuItem("MergeSort");
 
         ToggleGroup group = new ToggleGroup();
-        bubblesortMenu.setToggleGroup(group);
-        insertionsortMenu.setToggleGroup(group);
-        quicksortMenu.setToggleGroup(group);
-        bubblesortMenu.setSelected(true);
+        bubbleSortMenu.setToggleGroup(group);
+        insertionSortMenu.setToggleGroup(group);
+        quickSortMenu.setToggleGroup(group);
+        mergeSortMenu.setToggleGroup(group);
+        bubbleSortMenu.setSelected(true);
 
-        sortingMenu.getItems().addAll(bubblesortMenu, insertionsortMenu, quicksortMenu);
+        sortingMenu.getItems().addAll(bubbleSortMenu, insertionSortMenu, quickSortMenu, mergeSortMenu);
 
         menuBar.getMenus().add(sortingMenu);
 
         //create buttons
-        Button step = new Button("Step");
+        step = new Button("Step");
         auto = new Button("Auto");
         Button set = new Button("Set");
         Label label = new Label("set time in ms:");
@@ -109,9 +109,10 @@ public class Main extends Application {
 
         newSort(SortingType.BubbleSort);
 
-        bubblesortMenu.setOnAction(event -> newSort(SortingType.BubbleSort));
-        insertionsortMenu.setOnAction(event -> newSort(SortingType.InsertionSort));
-        quicksortMenu.setOnAction(event -> newSort(SortingType.QuickSort));
+        bubbleSortMenu.setOnAction(event -> newSort(SortingType.BubbleSort));
+        insertionSortMenu.setOnAction(event -> newSort(SortingType.InsertionSort));
+        quickSortMenu.setOnAction(event -> newSort(SortingType.QuickSort));
+        mergeSortMenu.setOnAction(event -> newSort(SortingType.MergeSort));
 
         step.setOnMouseClicked(event -> {
             if (!sort.isFinished()) {
@@ -159,17 +160,34 @@ public class Main extends Application {
                     }
                     try {
                         Thread.sleep(getTime);
-                    } catch (InterruptedException e) {
-                        break;
+                    } catch (InterruptedException e) {  // Thread is interrupted when switching sorting type.
+                        if (!sort.isFinished()) {
+                            sort.stop();
+                            isRunning = false;
+                            //e.printStackTrace();
+                        }
+                        return;
                     }
                 }
-            } catch (InterruptedException ignored) {
+            } catch (InterruptedException e) {
                 // Exit immediately
+                if (!sort.isFinished()) {
+                    sort.stop();
+                    isRunning = false;
+                    return;
+                }
             }
+            if (sort.getStopCause() != null) {
+                sort.getStopCause().printStackTrace();
+            }
+            yieldingArray.clearMarkers();
+            Platform.runLater(() -> pane.reDraw(yieldingArray));
+            System.out.println("DONE");
+            if (isRunning) toggle();
         }
 
         void toggle() {
-            isRunning = !isRunning;
+            step.setDisable(isRunning = !isRunning);
         }
     }
 

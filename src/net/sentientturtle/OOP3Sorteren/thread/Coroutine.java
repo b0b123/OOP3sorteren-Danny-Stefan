@@ -65,7 +65,7 @@ public abstract class Coroutine {
     /**
      * Steps this coroutine until the next yield, or it finishes
      * Will do nothing if this coroutine has already finished
-     * @throws InterruptedException If this coroutine was interrupted
+     * @throws InterruptedException If this coroutine was interrupted, or the calling thread was interrupted
      */
     public void step() throws InterruptedException {
         if (!this.isFinished()) {

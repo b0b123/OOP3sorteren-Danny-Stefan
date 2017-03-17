@@ -71,7 +71,7 @@ public class YieldingArray<E extends Comparable<E>> {
      * @param index1 Index of the value to compare width
      * @param index2 Index of the value to compare to
      * @return A negative number, zero, or positive number if the value at index1 is lesser, equal or greater than the value at index2
-     * @throws InterruptedException If the yield was interrupted
+     * @throws InterruptedException If the yield of this method is interrupted
      */
     public int compare(int index1, int index2) throws InterruptedException {
         Coroutine.yield();
@@ -84,7 +84,7 @@ public class YieldingArray<E extends Comparable<E>> {
      * @param index Index of the value to compare width
      * @param value Value to compare to
      * @return A negative number, zero, or a positive number if the value at index is lesser, equal, or greater than the given value
-     * @throws InterruptedException If the yield is interrupted
+     * @throws InterruptedException If the yield of this method is interrupted
      */
     public int compareTo(int index, E value) throws InterruptedException {
         Coroutine.yield();
@@ -107,5 +107,25 @@ public class YieldingArray<E extends Comparable<E>> {
      */
     public E[] getData() {
         return data.clone();
+    }
+
+    /**
+     * Clears compare and swapped markers by setting them to (-1, -1)
+     */
+    public void clearMarkers() {
+        lastCompared.set(-1, -1);
+        lastSwapped.set(-1, -1);
+    }
+
+    /**
+     * Sets the value at a given index
+     * @param index Index to set the value at
+     * @param value Value to set
+     * @throws InterruptedException If the yield of this method is interrupted
+     */
+    public void set(int index, E value) throws InterruptedException {
+        Coroutine.yield();
+        data[index] = value;
+        lastSwapped.set(-1, index);
     }
 }

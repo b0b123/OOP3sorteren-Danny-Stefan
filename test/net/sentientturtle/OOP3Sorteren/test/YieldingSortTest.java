@@ -47,4 +47,9 @@ public class YieldingSortTest {
     public void testQuickSort() throws InterruptedException {
         testSort(new QuickSort<>(getDataSet()));
     }
+
+    @Test
+    public void testMergeSort() throws InterruptedException {
+        testSort(new MergeSort<>(getDataSet()));
+    }
 }

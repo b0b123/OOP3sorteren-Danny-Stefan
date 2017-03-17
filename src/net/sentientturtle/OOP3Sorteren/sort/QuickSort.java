@@ -33,8 +33,8 @@ public class QuickSort<E extends Comparable<E>> extends YieldingSort<E> {
     private void quickSort(int start, int end) throws InterruptedException {
         if (start < end) {
             int i = partition(start, end);
-            quickSort(start, i - 1);
-            quickSort(i + 1, end);
+            quickSort(start, i - 1);    // (∩｀-´)⊃━☆ﾟ.*・｡ﾟ
+            quickSort(i + 1, end);      // Uses evil coroutine side effect magic to halt during sorts while maintaining recursive implementation
         }
     }
 
