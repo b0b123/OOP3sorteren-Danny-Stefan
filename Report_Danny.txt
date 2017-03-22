@@ -1,8 +1,9 @@
 Evaluatie better code hub:
 
 * Keep Architecture Components Balanced:
-    De 'src' map word als component herkend; Het is niet heel duidelijk wat het probleem is
-* Separate Concerns in Modules:
-    De class 'Coroutine' heeft veel inbound calls, voornamelijk voor cleanup en setup.
-* Write Short Units of Code
-    De methods Main#start, ChartPane#reDraw zijn lang, en leveren voornamelijk de GUI aan, dit zou verbeterd kunnen worden met FXML
+    De 'src' map word als component herkend; Het is niet heel duidelijk wat het probleem is.
+    Verder is de implementatie gesplitst in de packages "sort", "thread", "ui" en "util"
+
+Er is gekozen voor de coroutine aanpak om het sorteren stop te zetten, omdat deze aanpak het mogelijk maakt om de algoritment recursief te implementeren.
+Het andere voordeel is dat de algoritmen niet unrolled zijn, en hierdoor de code hiervan beter te lezen is.
+
