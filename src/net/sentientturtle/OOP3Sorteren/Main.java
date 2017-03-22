@@ -24,8 +24,10 @@ public class Main extends Application {
     private Button auto;
     private Thread bgThread;
 
+    private static final int dataSize = 50;
+
     private void newSort(SortingType sortingType) {
-        Integer[] data = new Integer[20];
+        Integer[] data = new Integer[dataSize];
         for (int i = 0; i < data.length; i++) data[i] = random.nextInt(10)+1;
         dataSet = new YieldingArray<>(data);
         switch (sortingType) {
@@ -53,10 +55,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage){
-//        final AbstractSort<Integer> sort;
         pane = new ChartPane();
         pane.setStyle("-fx-border-color: black");
-
 
         //Create MenuBar
         MenuBar menuBar = new MenuBar();
@@ -158,16 +158,7 @@ public class Main extends Application {
                         }
                         Platform.runLater(() -> pane.reDraw(yieldingArray));
                     }
-                    try {
-                        Thread.sleep(getTime);
-                    } catch (InterruptedException e) {  // Thread is interrupted when switching sorting type.
-                        if (!sort.isFinished()) {
-                            sort.stop();
-                            isRunning = false;
-                            //e.printStackTrace();
-                        }
-                        return;
-                    }
+                    Thread.sleep(getTime);
                 }
             } catch (InterruptedException e) {
                 // Exit immediately
@@ -177,12 +168,9 @@ public class Main extends Application {
                     return;
                 }
             }
-            if (sort.getStopCause() != null) {
-                sort.getStopCause().printStackTrace();
-            }
+            if (sort.getStopCause() != null) sort.getStopCause().printStackTrace();
             yieldingArray.clearMarkers();
             Platform.runLater(() -> pane.reDraw(yieldingArray));
-            System.out.println("DONE");
             if (isRunning) toggle();
         }
 

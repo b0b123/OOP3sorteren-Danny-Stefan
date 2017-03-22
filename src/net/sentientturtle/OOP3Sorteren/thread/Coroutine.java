@@ -1,47 +1,26 @@
 package net.sentientturtle.OOP3Sorteren.thread;
 
-import java.util.*;
-
 /**
  * Basic coroutine implementation, uses a separate thread for each coroutine
  */
 public abstract class Coroutine {
-    private static Map<Thread, Coroutine> threadMap = Collections.synchronizedMap(new HashMap<>());
-    private final Thread thread;
-
+    private final CoroutineThread thread;
     private boolean isStarted = false;
     private boolean isFinished = false;
     private boolean isRunning = false;
-    private boolean isInterrupted = false;
     private Throwable stopCause = null;
 
     /**
-     * Creates a new coroutine
+     * Creates a new coroutine and waits until it's ready.
+     * If interrupted, returns immediately, even if the coroutine is not yet ready to start.
      */
     public Coroutine() {
-        Coroutine coroutine = this;
-        this.thread = new Thread(() -> {
-            coroutine.setStarted();
-            coroutine.setRunning(true);
-            try {
-                Coroutine.yield();
-                coroutine.run();
-            } catch (InterruptedException e) {
-                coroutine.setFinished();
-                coroutine.setInterrupt();
-            } catch (Throwable e) {
-                coroutine.setStopCause(e);
-            }
-            coroutine.setFinished();
-            coroutine.setRunning(false);
-        });
-        threadMap.put(thread, coroutine);
+        this.thread = new CoroutineThread(this);
         thread.start();
-        while (!coroutine.isStarted()) {
+        while (!isStarted) {
             try {
                 Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
         }
     }
@@ -67,16 +46,15 @@ public abstract class Coroutine {
      * Will do nothing if this coroutine has already finished
      * @throws InterruptedException If this coroutine was interrupted, or the calling thread was interrupted
      */
-    public void step() throws InterruptedException {
-        if (!this.isFinished()) {
+    public synchronized void step() throws InterruptedException {
+        if (!isFinished) {
             synchronized (thread) {
                 thread.notify();
             }
             synchronized (this) {
                 this.wait();
             }
-            if (this.isInterrupted()) throw new InterruptedException();
-            if (this.isFinished()) threadMap.remove(thread);
+            if (stopCause instanceof InterruptedException) throw new InterruptedException();
         }
     }
 
@@ -84,8 +62,8 @@ public abstract class Coroutine {
      * Repeatedly steps until this coroutine is finished
      * @throws InterruptedException If this coroutine is interrupted at any point during the step-through
      */
-    public void stepThrough() throws InterruptedException {
-        while (!this.isFinished()) {
+    public synchronized void stepThrough() throws InterruptedException {
+        while (!isFinished) {
             step();
         }
     }
@@ -97,8 +75,8 @@ public abstract class Coroutine {
      */
     public static void yield() throws InterruptedException {
         Thread currentThread = Thread.currentThread();
-        if (threadMap.containsKey(currentThread)) {
-            Coroutine coroutine = threadMap.get(currentThread);
+        if (currentThread instanceof CoroutineThread) {
+            Coroutine coroutine = ((CoroutineThread) currentThread).getCoroutine();
             coroutine.setRunning(false);
             synchronized (currentThread) {
                 currentThread.wait();
@@ -121,21 +99,6 @@ public abstract class Coroutine {
      */
     public boolean isRunning() {
         return isRunning;
-    }
-
-    /**
-     * Sets the setInterrupt flag on this coroutine
-     */
-    private void setInterrupt() {
-        this.isInterrupted = true;
-    }
-
-    /**
-     * Returns the interrupted state of this coroutine
-     * @return True if this coroutine was interrupted, false otherwise
-     */
-    public boolean isInterrupted() {
-        return isInterrupted;
     }
 
     /**
@@ -184,5 +147,35 @@ public abstract class Coroutine {
      */
     public Throwable getStopCause() {
         return stopCause;
+    }
+
+    /**
+     * Thread to run the coroutine in
+     */
+    private static class CoroutineThread extends Thread {
+        private Coroutine coroutine;
+
+        private CoroutineThread(Coroutine coroutine) {
+            this.coroutine = coroutine;
+        }
+
+        @Override
+        public void run() {
+            coroutine.setStarted();
+            coroutine.setRunning(true);
+            try {
+                Coroutine.yield();
+                coroutine.run();
+            } catch (Throwable e) {
+                coroutine.setStopCause(e);
+            } finally {
+                coroutine.setFinished();
+                coroutine.setRunning(false);
+            }
+        }
+
+        public Coroutine getCoroutine() {
+            return coroutine;
+        }
     }
 }
