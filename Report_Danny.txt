@@ -1,0 +1,8 @@
+Evaluatie better code hub:
+
+* Keep Architecture Components Balanced:
+    De 'src' map word als component herkend; Het is niet heel duidelijk wat het probleem is
+* Separate Concerns in Modules:
+    De class 'Coroutine' heeft veel inbound calls, voornamelijk voor cleanup en setup.
+* Write Short Units of Code
+    De methods Main#start, ChartPane#reDraw zijn lang, en leveren voornamelijk de GUI aan, dit zou verbeterd kunnen worden met FXML

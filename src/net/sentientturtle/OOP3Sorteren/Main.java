@@ -161,14 +161,8 @@ public class Main extends Application {
                     Thread.sleep(getTime);
                 }
             } catch (InterruptedException e) {
-                // Exit immediately
-                if (!sort.isFinished()) {
-                    sort.stop();
-                    isRunning = false;
-                    return;
-                }
+                if (!sort.isFinished()) sort.stop();
             }
-            if (sort.getStopCause() != null) sort.getStopCause().printStackTrace();
             yieldingArray.clearMarkers();
             Platform.runLater(() -> pane.reDraw(yieldingArray));
             if (isRunning) toggle();
